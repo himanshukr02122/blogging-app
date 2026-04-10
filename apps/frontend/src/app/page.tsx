@@ -3,11 +3,6 @@ import FilterSidebar from "@/components/blogs/filters/FilterSidebar";
 import RightSidebar from "@/components/blogs/sidebar/RightSidebar";
 
 export default function Home() {
-
-  const arr = ["red", "black", "green"]
-  console.log(arr);
-  
-  
   
   return (
     <section
