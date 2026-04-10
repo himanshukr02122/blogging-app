@@ -1,0 +1,30 @@
+/* globals.css */
+/* @tailwind base;
+@tailwind components; */
+@import "tailwindcss/preflight";
+@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.link.active {
+  font-weight: bold;
+  color: blue;
+  /* or any other styles */
+}
+
+/* 🌙 Dark mode */
+.dark .link.active {
+  color: lightblue;
+  /* or any dark-friendly color */
+}
+
+.max-width-groww-section {
+  max-width: calc(50vw - 80px);
+}
+
+@layer utilities {
+  .h-screen-minus-header {
+    height: calc(100vh - 72px);
+  }
+}
