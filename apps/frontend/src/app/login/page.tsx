@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
+import { useAppContext } from "@/contexts/AppProvider";
 import { login } from "@/lib/auth";
 
 const Login = () => {
   const router = useRouter();
+  const { setSession } = useAppContext();
   const [form, setForm] = useState({
-    email: "",
+    identifier: "",
     password: "",
   });
   const [error, setError] = useState("");
@@ -27,8 +29,7 @@ const Login = () => {
 
     try {
       const response = await login(form);
-      localStorage.setItem("auth_token", response.access_token);
-      localStorage.setItem("auth_user", JSON.stringify(response.user));
+      setSession(response);
       router.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to log in right now.");
@@ -38,16 +39,16 @@ const Login = () => {
   };
 
   return (
-    <section className="flex items-center justify-center h-screen-minus-header bg-gray-100 dark:bg-gray-900">
+    <section className="flex h-screen-minus-header items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-md dark:bg-gray-800">
         <h2 className="mb-6 text-center text-2xl font-semibold">Login</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
+            type="text"
+            name="identifier"
+            placeholder="Email or username"
+            value={form.identifier}
             onChange={handleChange}
             className="w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
@@ -79,13 +80,11 @@ const Login = () => {
         ) : null}
 
         <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          Don&apos;t have an account?{" "}
-          <Link
-            className="text-blue-600 underline dark:text-blue-50"
-            href="/sign-up"
-          >
-            Sign up
+          New users can still create an account from the{" "}
+          <Link className="text-blue-600 underline dark:text-blue-50" href="/sign-up">
+            sign up page
           </Link>
+          .
         </p>
       </div>
     </section>

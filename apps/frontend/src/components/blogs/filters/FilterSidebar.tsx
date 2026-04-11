@@ -1,13 +1,13 @@
 "use client"
 
-import { BlogContexts } from "@/contexts/AppProvider";
+import { AppContext } from "@/contexts/AppProvider";
 import { useContext } from "react";
 
 const allTags = ["react", "javascript", "frontend", "css"];
 
 export default function FilterSidebar() {
 
-  const { selectedTags, setSelectedTags } = useContext(BlogContexts);
+  const { selectedTags, setSelectedTags } = useContext(AppContext);
   
   const toggleTag = (tag: string) => {
     setSelectedTags((prev: string[]) =>
