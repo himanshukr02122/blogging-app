@@ -6,6 +6,8 @@ from app.schemas.blog import BlogCreate, BlogListResponse, BlogRead, BlogReviewA
 from app.services.blog_service import (
     BlogError,
     create_blog,
+    get_blog_preview_or_raise,
+    get_published_blog_or_raise,
     list_published_blogs,
     list_review_queue,
     list_user_blogs,
@@ -31,6 +33,26 @@ def get_my_blogs(
     db: Session = Depends(get_db),
 ) -> BlogListResponse:
     return BlogListResponse(items=list_user_blogs(db, current_user))
+
+
+@router.get("/{blog_id}/preview", response_model=BlogRead)
+def preview_blog(
+    blog_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> BlogRead:
+    try:
+        return get_blog_preview_or_raise(db, current_user, blog_id)
+    except BlogError as exc:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc)) from exc
+
+
+@router.get("/{blog_id}", response_model=BlogRead)
+def get_published_blog(blog_id: int, db: Session = Depends(get_db)) -> BlogRead:
+    try:
+        return get_published_blog_or_raise(db, blog_id)
+    except BlogError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
 @router.post("", response_model=BlogRead, status_code=status.HTTP_201_CREATED)
