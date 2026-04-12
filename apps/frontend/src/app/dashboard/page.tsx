@@ -253,6 +253,12 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-3">
+                  <Link
+                    href={`/blogs/${blog.id}`}
+                    className="rounded-lg border border-blue-200 px-4 py-2 text-sm text-blue-700 transition hover:bg-blue-50"
+                  >
+                    Preview
+                  </Link>
                   {["draft", "rejected", "withdrawn"].includes(blog.status) ? (
                     <button
                       onClick={() => handleSubmitForReview(blog.id)}

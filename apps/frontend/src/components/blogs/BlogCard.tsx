@@ -1,10 +1,15 @@
+import Link from "next/link";
+
 import { Blog } from "@/app/types/blog";
 
 export default function BlogCard({ blog }: { blog: Blog }) {
   const initials = blog.author.username.slice(0, 2).toUpperCase();
 
   return (
-    <div className="group relative rounded-xl bg-white p-4 shadow-sm transition hover:shadow-md dark:bg-gray-800">
+    <Link
+      href={`/blogs/${blog.id}`}
+      className="group relative block rounded-xl bg-white p-4 shadow-sm transition hover:shadow-md dark:bg-gray-800"
+    >
       <div className="mb-3 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 font-semibold text-white">
           {initials}
@@ -28,6 +33,6 @@ export default function BlogCard({ blog }: { blog: Blog }) {
           </span>
         ))}
       </div>
-    </div>
+    </Link>
   );
 }
