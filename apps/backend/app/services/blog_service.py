@@ -29,6 +29,18 @@ def get_blog_or_raise(db: Session, blog_id: int) -> Blog:
         raise BlogError("Blog not found.")
     return blog
 
+def get_published_blog_or_raise(db: Session, blog_id: int) -> Blog:
+    blog = get_blog_or_raise(db, blog_id)
+    if blog.status != BlogStatus.APPROVED.value:
+        raise BlogError("Blog not found.")
+    return blog
+
+def get_blog_preview_or_raise(db: Session, user: User, blog_id: int) -> Blog:
+    blog = get_blog_or_raise(db, blog_id)
+    if user.role != "admin" and blog.author_id != user.id:
+        raise BlogError("You are not allowed to preview this blog.")
+    return blog
+
 def list_published_blogs(db: Session) -> list[Blog]:
     result = db.execute(
         _blog_query()
