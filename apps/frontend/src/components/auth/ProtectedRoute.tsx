@@ -16,9 +16,13 @@ export default function ProtectedRoute({
   roles,
 }: ProtectedRouteProps) {
   const router = useRouter();
-  const { currentUser, isAuthenticated } = useAppContext();
+  const { currentUser, isAuthenticated, isHydrated } = useAppContext();
 
   useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
     if (!isAuthenticated) {
       router.replace("/login");
       return;
@@ -27,7 +31,11 @@ export default function ProtectedRoute({
     if (roles && currentUser && !roles.includes(currentUser.role)) {
       router.replace("/");
     }
-  }, [currentUser, isAuthenticated, roles, router]);
+  }, [currentUser, isAuthenticated, isHydrated, roles, router]);
+
+  if (!isHydrated) {
+    return null;
+  }
 
   if (!isAuthenticated || (roles && currentUser && !roles.includes(currentUser.role))) {
     return null;

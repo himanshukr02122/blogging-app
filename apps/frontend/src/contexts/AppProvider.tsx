@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useEffect,
   ReactNode,
   SetStateAction,
   useContext,
@@ -23,6 +24,7 @@ type AppContextType = {
   setSelectedTags: React.Dispatch<SetStateAction<string[]>>;
   token: string | null;
   currentUser: User | null;
+  isHydrated: boolean;
   isAuthenticated: boolean;
   setSession: (session: AuthResponse) => void;
   logout: () => Promise<void>;
@@ -33,6 +35,7 @@ const initialValues: AppContextType = {
   setSelectedTags: () => {},
   token: null,
   currentUser: null,
+  isHydrated: false,
   isAuthenticated: false,
   setSession: () => {},
   logout: async () => {},
@@ -44,13 +47,21 @@ export const useAppContext = () => useContext(AppContext);
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [token, setToken] = useState<string | null>(() => getStoredToken());
-  const [currentUser, setCurrentUser] = useState<User | null>(() => getStoredUser());
+  const [token, setToken] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setToken(getStoredToken());
+    setCurrentUser(getStoredUser());
+    setIsHydrated(true);
+  }, []);
 
   const setSession = (session: AuthResponse) => {
     persistSession(session);
     setToken(session.access_token);
     setCurrentUser(session.user);
+    setIsHydrated(true);
   };
 
   const logout = async () => {
@@ -62,6 +73,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
       clearSession();
       setToken(null);
       setCurrentUser(null);
+      setIsHydrated(true);
     }
   };
 
@@ -72,6 +84,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
         setSelectedTags,
         token,
         currentUser,
+        isHydrated,
         isAuthenticated: Boolean(token && currentUser),
         setSession,
         logout,
