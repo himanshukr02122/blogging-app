@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { Blog } from "@/app/types/blog";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -52,7 +53,8 @@ export default function DashboardPage() {
       form.tags
         .split(",")
         .map((tag) => tag.trim())
-        .filter(Boolean),
+        .filter(Boolean)
+        .map((tag) => ({ id: uuidv4(), value: tag })),
     [form.tags]
   );
 
@@ -68,7 +70,7 @@ export default function DashboardPage() {
         title: form.title,
         summary: form.summary,
         content: form.content,
-        tags: tagPreview,
+        tags: tagPreview.map((tag) => tag.value),
       });
       setForm(emptyForm);
       setSuccess("Draft created. You can submit it for review from the list below.");
@@ -186,10 +188,10 @@ export default function DashboardPage() {
               <div className="mt-3 flex flex-wrap gap-2">
                 {tagPreview.map((tag) => (
                   <span
-                    key={tag}
+                    key={tag.id}
                     className="rounded-full bg-blue-50 px-3 py-1 text-xs text-blue-700"
                   >
-                    #{tag}
+                    #{tag.value}
                   </span>
                 ))}
               </div>
