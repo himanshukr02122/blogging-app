@@ -82,7 +82,7 @@ const Login = () => {
         <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
           New users can still create an account from the{" "}
           <Link className="text-blue-600 underline dark:text-blue-50" href="/sign-up">
-            sign up page
+            sign up
           </Link>
           .
         </p>
