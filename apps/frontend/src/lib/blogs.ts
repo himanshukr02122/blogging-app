@@ -50,6 +50,14 @@ export function listPublishedBlogs() {
   return request<{ items: Blog[] }>("/blogs");
 }
 
+export function getPublishedBlog(blogId: number) {
+  return request<Blog>(`/blogs/${blogId}`);
+}
+
+export function getBlogPreview(token: string, blogId: number) {
+  return request<Blog>(`/blogs/${blogId}/preview`, token);
+}
+
 export function listMyBlogs(token: string) {
   return request<{ items: Blog[] }>("/blogs/mine", token);
 }
