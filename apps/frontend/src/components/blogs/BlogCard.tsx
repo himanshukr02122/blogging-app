@@ -10,6 +10,13 @@ export default function BlogCard({ blog }: { blog: Blog }) {
       href={`/blogs/${blog.id}`}
       className="group relative block rounded-xl bg-white p-4 shadow-sm transition hover:shadow-md dark:bg-gray-800"
     >
+      {/* Overlay */}
+      <div className="absolute inset-0 z-10 rounded-xl flex items-center justify-center bg-black/50 opacity-0 transition duration-300 group-hover:opacity-100">
+        <span className="flex items-center gap-2 backdrop-blur-sm rounded-4xl bg-white px-6 py-2 text-sm font-semibold text-black shadow">
+          View Post
+          <span className="text-xl leading-none">&#8594;</span>
+        </span>
+      </div>
       <div className="mb-3 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 font-semibold text-white">
           {initials}
