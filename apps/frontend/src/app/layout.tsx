@@ -5,6 +5,7 @@ import AppProvider from "../contexts/AppProvider";
 import Header from "@/components/layout/Header";
 import { Providers } from "./providers";
 import ThemeToggle from "@/components/ui/ThemeMode";
+import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,7 @@ export default function RootLayout({
             </div>
           </AppProvider>
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
