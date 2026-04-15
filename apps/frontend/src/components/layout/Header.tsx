@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-
 import Button from "@/components/ui/Buttons";
 import { useAppContext } from "@/contexts/AppProvider";
+import ThemeToggle from "@/components/ui/ThemeMode";
 
 const Header = () => {
   const pathname = usePathname();
@@ -78,6 +78,7 @@ const Header = () => {
 
         {/* RIGHT */}
         <div className="flex items-center gap-2 sm:gap-3">
+        <ThemeToggle />
           {isAuthenticated ? (
             <>
               {/* PRIMARY ACTION */}

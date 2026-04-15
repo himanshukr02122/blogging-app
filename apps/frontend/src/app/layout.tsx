@@ -4,8 +4,8 @@ import "./globals.css";
 import AppProvider from "../contexts/AppProvider";
 import Header from "@/components/layout/Header";
 import { Providers } from "./providers";
-import ThemeToggle from "@/components/ui/ThemeMode";
 import { Analytics } from '@vercel/analytics/next';
+import BackendWakingUp from "@/components/layout/BackendWakingUp";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,11 +38,7 @@ export default function RootLayout({
             >
               {children}
             </main>
-            <div      
-              className="fixed bottom-8 right-8 z-10"
-            >
-              <ThemeToggle />
-            </div>
+            <BackendWakingUp />
           </AppProvider>
         </Providers>
         <Analytics />
