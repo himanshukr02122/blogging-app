@@ -34,7 +34,7 @@ export default function RootLayout({
           <AppProvider>
             <Header />
             <main
-              className="mt-18 bg-white dark:bg-gray-900"
+              className="mt-16 bg-white dark:bg-gray-900"
             >
               {children}
             </main>

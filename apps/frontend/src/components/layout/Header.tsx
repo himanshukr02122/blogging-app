@@ -45,8 +45,8 @@ const Header = () => {
   const actionLabel = isAdmin ? "Review Blogs" : "Create Blog";
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b bg-gray-100 dark:bg-gray-900">
-      <div className="flex items-center justify-between px-4 py-3 lg:px-12">
+    <nav className="fixed top-0 z-50 w-full border-b bg-gray-100 dark:bg-gray-900 h-16">
+      <div className="flex items-center justify-between px-4 py-3 lg:px-12 h-full">
         
         {/* LEFT */}
         <div className="flex items-center gap-3">
@@ -89,14 +89,13 @@ const Header = () => {
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setIsMenuOpen((v) => !v)}
-                  className="flex items-center gap-2 rounded-full border bg-white px-2 py-1 dark:bg-gray-800 hover:border-blue-300 transition"
+                  className="flex items-center gap-2 rounded-full border bg-white p-1 dark:bg-gray-800 hover:border-blue-300 transition"
                 >
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white text-sm font-semibold">
                     {initials}
                   </span>
 
-                  {/* username hidden on mobile */}
-                  <span className="hidden sm:block text-sm font-medium">
+                  <span className="text-sm font-medium">
                     {currentUser?.username}
                   </span>
 

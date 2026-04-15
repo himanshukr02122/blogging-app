@@ -25,6 +25,6 @@
 
 @layer utilities {
   .h-screen-minus-header {
-    height: calc(100vh - 72px);
+    height: calc(100vh - 66px);
   }
 }

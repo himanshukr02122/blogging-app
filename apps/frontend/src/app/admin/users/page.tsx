@@ -112,7 +112,7 @@ export default function AdminUsersPage() {
                           e.target.value as "admin" | "author"
                         )
                       }
-                      className="rounded border px-2 py-1"
+                      className="rounded border px-2 py-1 bg-white text-black"
                     >
                       <option value="author">author</option>
                       <option value="admin">admin</option>
