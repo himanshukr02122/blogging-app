@@ -12,6 +12,7 @@ export default function AdminReviewsPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [comments, setComments] = useState<Record<number, string>>({});
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const loadQueue = useCallback(async () => {
     if (!token) return;
@@ -44,6 +45,7 @@ export default function AdminReviewsPage() {
     }
 
     setError("");
+    setLoading(true);
 
     try {
       await reviewBlog(token, blogId, { status, comment });
@@ -51,6 +53,8 @@ export default function AdminReviewsPage() {
       await loadQueue();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to review blog.");
+    } finally {    
+      setLoading(false);
     }
   };
 
@@ -110,14 +114,16 @@ export default function AdminReviewsPage() {
               <button
                 onClick={() => handleReview(blog.id, "approved")}
                 className="rounded-lg bg-green-600 px-4 py-2 text-white"
+                disabled={loading}
               >
-                Approve
+                {loading ? "Please wait..." : "Approve"}
               </button>
               <button
                 onClick={() => handleReview(blog.id, "rejected")}
                 className="rounded-lg bg-red-600 px-4 py-2 text-white"
+                disabled={loading}
               >
-                Reject
+                {loading ? "Please wait..." : "Reject"}
               </button>
             </div>
           </article>
