@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Snackbar from "../ui/Snackbar";
+import { healthCheck } from "@/lib/auth";
 
 type SnackbarState = {
   title: string;
@@ -19,24 +20,23 @@ const BackendWakingUp = () => {
     let interval: NodeJS.Timeout;
 
     const checkBackend = async () => {
-    //   try {
-    //     const res = await fetch("https://your-backend-url.com/health");
+      try {
+        const res = await healthCheck();
+        if (res.status === "ok") {
+          // ✅ Backend is ready
+          setSnackbar({
+            title: "You're all set 🚀",
+            description: "Everything is up and running. You can continue now!",
+          });
 
-    //     if (res.ok) {
-    //       // ✅ Backend is ready
-    //       setSnackbar({
-    //         title: "You're all set 🚀",
-    //         description: "Everything is up and running. You can continue now!",
-    //       });
+          clearInterval(interval);
 
-    //       clearInterval(interval);
-
-    //       // auto hide after 3 sec
-    //       setTimeout(() => setSnackbar(null), 3000);
-    //     }
-    //   } catch (err) {
-    //     // still waking up → ignore
-    //   }
+          // auto hide after 3 sec
+          setTimeout(() => setSnackbar(null), 3000);
+        }
+      } catch (err) {
+        // still waking up → ignore
+      }
     };
 
     // check immediately + every 5 sec

@@ -21,6 +21,7 @@ type RequestOptions = {
   method?: string;
   payload?: unknown;
   token?: string | null;
+  cache?: RequestCache;
 };
 
 const API_BASE_URL =
@@ -111,4 +112,11 @@ export function logoutRequest(token: string | null) {
 
 export function isAdmin(user: User | null): user is User & { role: UserRole } {
   return user?.role === "admin";
+}
+
+
+export function healthCheck() {
+  return request<{ status: "ok" }>("/health", {
+    cache: "no-store",
+  });
 }

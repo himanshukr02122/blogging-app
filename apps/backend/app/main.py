@@ -76,3 +76,7 @@ app.include_router(admin_blogs_router)
 @app.get("/")
 def read_root() -> dict[str, str]:
     return {"message": "Backend running"}
+
+@app.get("/health")
+def health_check() -> dict[str, str]:
+    return {"status": "ok"}
