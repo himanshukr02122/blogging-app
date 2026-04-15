@@ -58,12 +58,13 @@ export default function DashboardPage() {
     [form.tags]
   );
 
-  const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreate = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!token) return;
 
     setError("");
     setSuccess("");
+    setLoading(true);
 
     try {
       await createBlog(token, {
@@ -77,6 +78,8 @@ export default function DashboardPage() {
       await loadBlogs();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to create blog.");
+    } finally {    
+      setLoading(false);
     }
   };
 
@@ -200,8 +203,9 @@ export default function DashboardPage() {
             <button
               type="submit"
               className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
+              disabled={loading}
             >
-              Save Draft
+              {loading ? "Saving..." : "Save Draft"}
             </button>
           </form>
         )}
