@@ -21,16 +21,11 @@ export default function Snackbar({
         setMounted(true);
     }, []);
 
-    // useEffect(() => {
-    //     const timer = setTimeout(onClose, 5000);
-    //     return () => clearTimeout(timer);
-    // }, [onClose]);
-
     if (!mounted) return null;
 
     return createPortal(
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-9999 w-[90%] max-w-md rounded-xl border bg-gray-900 text-white p-4 shadow-lg flex items-start justify-between gap-4">
-            <Loader className="animate-spin w-8 h-8" />
+            <Loader className="animate-spin w-5 h-5 shrink-0 mt-1" />
             <div>
                 <p className="font-semibold">{title}</p>
                 <p className="text-sm text-gray-300">{description}</p>
