@@ -66,7 +66,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
-      await logoutRequest(token);
+      await logoutRequest();
     } catch {
       // Ignore logout transport errors because the client session is authoritative here.
     } finally {

@@ -38,7 +38,7 @@ export default function BlogPage({ params }: BlogPageProps) {
 
       try {
         const response = token
-          ? await getBlogPreview(token, numericBlogId).catch(() => getPublishedBlog(numericBlogId))
+          ? await getBlogPreview(numericBlogId).catch(() => getPublishedBlog(numericBlogId))
           : await getPublishedBlog(numericBlogId);
 
         if (isActive) {

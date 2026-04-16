@@ -1,42 +1,31 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Blog } from "@/app/types/blog";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { useAppContext } from "@/contexts/AppProvider";
 import { listReviewQueue, reviewBlog } from "@/lib/blogs";
 
 export default function AdminReviewsPage() {
-  const { token } = useAppContext();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [comments, setComments] = useState<Record<number, string>>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState("");
 
-  const loadQueue = useCallback(async () => {
-    if (!token) return;
-
+  const loadQueue = async () => {
     try {
-      const response = await listReviewQueue(token);
+      const response = await listReviewQueue();
       setBlogs(response.items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load review queue.");
     }
-  }, [token]);
+  }
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      void loadQueue();
-    }, 0);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [loadQueue]);
+    void loadQueue();
+  }, []);
 
   const handleReview = async (blogId: number, status: "approved" | "rejected") => {
-    if (!token) return;
     const comment = comments[blogId]?.trim();
 
     if (!comment) {
@@ -48,7 +37,7 @@ export default function AdminReviewsPage() {
     setLoading(status);
 
     try {
-      await reviewBlog(token, blogId, { status, comment });
+      await reviewBlog(blogId, { status, comment });
       setComments((prev) => ({ ...prev, [blogId]: "" }));
       await loadQueue();
     } catch (err) {

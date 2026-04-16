@@ -1,3 +1,4 @@
+import { apiRequest, AUTH_TOKEN_KEY, AUTH_USER_KEY } from "@/lib/apiClient";
 import { User, UserRole } from "@/app/types/blog";
 
 export type SignUpPayload = {
@@ -17,46 +18,7 @@ export type AuthResponse = {
   user: User;
 };
 
-type RequestOptions = {
-  method?: string;
-  payload?: unknown;
-  token?: string | null;
-  cache?: RequestCache;
-};
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-
-export const AUTH_TOKEN_KEY = "auth_token";
-export const AUTH_USER_KEY = "auth_user";
-
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  if (options.token) {
-    headers.Authorization = `Bearer ${options.token}`;
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: options.method ?? "GET",
-    headers,
-    body: options.payload ? JSON.stringify(options.payload) : undefined,
-  });
-
-  const data = await response.json().catch(() => null);
-  if (!response.ok) {
-    const message =
-      data && typeof data.detail === "string"
-        ? data.detail
-        : "Something went wrong. Please try again.";
-    throw new Error(message);
-  }
-
-  return data as T;
-}
-
+// ✅ Session management
 export function persistSession(session: AuthResponse) {
   localStorage.setItem(AUTH_TOKEN_KEY, session.access_token);
   localStorage.setItem(AUTH_USER_KEY, JSON.stringify(session.user));
@@ -74,39 +36,40 @@ export function getStoredToken() {
 
 export function getStoredUser(): User | null {
   if (typeof window === "undefined") return null;
-  const rawUser = localStorage.getItem(AUTH_USER_KEY);
-  if (!rawUser) return null;
+
+  const raw = localStorage.getItem(AUTH_USER_KEY);
+  if (!raw) return null;
 
   try {
-    return JSON.parse(rawUser) as User;
+    return JSON.parse(raw);
   } catch {
     clearSession();
     return null;
   }
 }
 
+// ✅ API calls
 export function signUp(payload: SignUpPayload) {
-  return request<AuthResponse>("/auth/sign-up", {
+  return apiRequest<AuthResponse>("/auth/sign-up", {
     method: "POST",
-    payload,
+    body: JSON.stringify(payload),
   });
 }
 
 export function login(payload: LoginPayload) {
-  return request<AuthResponse>("/auth/login", {
+  return apiRequest<AuthResponse>("/auth/login", {
     method: "POST",
-    payload,
+    body: JSON.stringify(payload),
   });
 }
 
-export function getCurrentUser(token: string) {
-  return request<User>("/auth/me", { token });
+export function getCurrentUser() {
+  return apiRequest<User>("/auth/me");
 }
 
-export function logoutRequest(token: string | null) {
-  return request<{ message: string }>("/auth/logout", {
+export function logoutRequest() {
+  return apiRequest<{ message: string }>("/auth/logout", {
     method: "POST",
-    token,
   });
 }
 
@@ -114,9 +77,8 @@ export function isAdmin(user: User | null): user is User & { role: UserRole } {
   return user?.role === "admin";
 }
 
-
 export function healthCheck() {
-  return request<{ status: "ok" }>("/health", {
+  return apiRequest<{ status: "ok" }>("/health", {
     cache: "no-store",
   });
 }

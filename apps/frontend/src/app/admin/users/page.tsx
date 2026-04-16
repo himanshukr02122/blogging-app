@@ -20,7 +20,7 @@ export default function AdminUsersPage() {
     if (!token) return;
 
     try {
-      const response = await listUsers(token, nextPage, nextQuery);
+      const response = await listUsers(nextPage, nextQuery);
       setUsers(response.items);
       setTotal(response.total);
       setPage(response.page);
@@ -44,7 +44,7 @@ export default function AdminUsersPage() {
     setError("");
 
     try {
-      await updateUserRole(token, userId, role);
+      await updateUserRole(userId, role);
       await loadUsers(page, query);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to update user role.");

@@ -17,7 +17,7 @@ const emptyForm = {
 };
 
 export default function DashboardPage() {
-  const { token, currentUser } = useAppContext();
+  const { currentUser } = useAppContext();
   const [form, setForm] = useState(emptyForm);
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [error, setError] = useState("");
@@ -26,27 +26,21 @@ export default function DashboardPage() {
   const isAdmin = currentUser?.role === "admin";
 
   const loadBlogs = useCallback(async () => {
-    if (!token || isAdmin) return;
+    if (isAdmin) return;
     setLoading(true);
     try {
-      const response = await listMyBlogs(token);
+      const response = await listMyBlogs();
       setBlogs(response.items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load your blogs.");
     } finally {
       setLoading(false);
     }
-  }, [isAdmin, token]);
+  }, [isAdmin]);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      void loadBlogs();
-    }, 0);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [loadBlogs]);
+    void loadBlogs();
+  }, []);
 
   const tagPreview = useMemo(
     () =>
@@ -60,14 +54,13 @@ export default function DashboardPage() {
 
   const handleCreate = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     setError("");
     setSuccess("");
     setLoading(true);
 
     try {
-      await createBlog(token, {
+      await createBlog({
         title: form.title,
         summary: form.summary,
         content: form.content,
@@ -84,12 +77,11 @@ export default function DashboardPage() {
   };
 
   const handleSubmitForReview = async (blogId: number) => {
-    if (!token) return;
     setError("");
     setSuccess("");
 
     try {
-      await submitBlog(token, blogId);
+      await submitBlog(blogId);
       setSuccess("Blog submitted for admin review.");
       await loadBlogs();
     } catch (err) {
@@ -98,12 +90,11 @@ export default function DashboardPage() {
   };
 
   const handleWithdraw = async (blogId: number) => {
-    if (!token) return;
     setError("");
     setSuccess("");
 
     try {
-      await withdrawBlog(token, blogId);
+      await withdrawBlog(blogId);
       setSuccess("Blog submission withdrawn.");
       await loadBlogs();
     } catch (err) {
