@@ -18,8 +18,36 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Blogging App",
-  description: "Blog publishing workflow with author and admin review flows",
+  title: {
+    default: "Tech Blog – Web Development, React, Next.js Guides",
+    template: "%s | Tech Blog",
+  },
+  description:
+    "Learn React, Next.js, JavaScript, and system design with practical guides, tutorials, and real-world examples.",
+  keywords: [
+    "React tutorials",
+    "Next.js blog",
+    "frontend development",
+    "JavaScript guides",
+    "web development blog"
+  ],
+  authors: [{ name: "Himanshu Kumar" }],
+  openGraph: {
+    title: "Tech Blog",
+    description:
+      "Practical guides on React, Next.js, and modern web development.",
+    url: "https://blogging-app-frontend-ten.vercel.app/",
+    siteName: "Tech Blog",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

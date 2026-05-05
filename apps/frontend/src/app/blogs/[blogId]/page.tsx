@@ -1,10 +1,8 @@
-"use client";
-
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
-import { Blog } from "@/app/types/blog";
-import { useAppContext } from "@/contexts/AppProvider";
+// import { Blog } from "@/app/types/blog";
+// import { useAppContext } from "@/contexts/AppProvider";
 import { getBlogPreview, getPublishedBlog } from "@/lib/blogs";
 
 type BlogPageProps = {
@@ -13,67 +11,103 @@ type BlogPageProps = {
   }>;
 };
 
-export default function BlogPage({ params }: BlogPageProps) {
-  const { blogId } = use(params);
-  const { currentUser, isHydrated, token } = useAppContext();
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+export async function generateMetadata({ params }: BlogPageProps) {
+  const { blogId } = await params;
+  const blog = await getPublishedBlog(Number(blogId));
 
-  useEffect(() => {
-    if (!isHydrated) return;
-
-    const numericBlogId = Number(blogId);
-    if (!Number.isInteger(numericBlogId) || numericBlogId <= 0) {
-      setError("Invalid blog link.");
-      setLoading(false);
-      return;
-    }
-
-    let isActive = true;
-
-    const loadBlog = async () => {
-      setLoading(true);
-      setError("");
-
-      try {
-        const response = token
-          ? await getBlogPreview(numericBlogId).catch(() => getPublishedBlog(numericBlogId))
-          : await getPublishedBlog(numericBlogId);
-
-        if (isActive) {
-          setBlog(response);
-        }
-      } catch (err) {
-        if (isActive) {
-          setBlog(null);
-          setError(err instanceof Error ? err.message : "Unable to load the blog.");
-        }
-      } finally {
-        if (isActive) {
-          setLoading(false);
-        }
-      }
+  if (!blog) {
+    return {
+      title: "Blog not found",
+      robots: "noindex, nofollow",
     };
-
-    void loadBlog();
-
-    return () => {
-      isActive = false;
-    };
-  }, [blogId, isHydrated, token]);
-
-  if (loading || !isHydrated) {
-    return (
-      <section className="mx-auto max-w-4xl px-4 py-10">
-        <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800">
-          <p className="text-sm text-gray-600 dark:text-gray-300">Loading blog...</p>
-        </div>
-      </section>
-    );
   }
 
-  if (error || !blog) {
+  return {
+    title: blog.title,
+    description: blog.summary,
+
+    robots:
+      blog.status === "approved"
+        ? "index, follow"
+        : "noindex, nofollow",
+
+    alternates: {
+      canonical: process.env.NEXT_PUBLIC_MODE ==="dev" ? `http://localhost:3000/blogs${blog.id}` : `https://blogging-app-frontend-ten.vercel.app/blogs/${blog.id}`,
+    },
+
+    openGraph: {
+      title: blog.title,
+      description: blog.summary,
+    },
+  };
+}
+
+export default async function BlogPage({ params }: BlogPageProps) {
+  const { blogId } = await params;
+  // const { currentUser, isHydrated, token } = useAppContext();
+  // const [blog, setBlog] = useState<Blog | null>(null);
+  // const [error, setError] = useState("");
+  // const [loading, setLoading] = useState(true);
+
+  const blog = await getPublishedBlog(Number(blogId));
+
+  // if (!blog || blog.status !== "approved") {
+  //   return <div>Not available</div>;
+  // }
+
+  // useEffect(() => {
+  //   if (!isHydrated) return;
+
+  //   if (!Number.isInteger(blogId) || blogId <= 0) {
+  //     setError("Invalid blog link.");
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   let isActive = true;
+
+  //   const loadBlog = async () => {
+  //     setLoading(true);
+  //     setError("");
+
+  //     try {
+  //       const response = token
+  //         ? await getBlogPreview(blogId).catch(() => getPublishedBlog(blogId))
+  //         : await getPublishedBlog(blogId);
+
+  //       if (isActive) {
+  //         setBlog(response);
+  //       }
+  //     } catch (err) {
+  //       if (isActive) {
+  //         setBlog(null);
+  //         setError(err instanceof Error ? err.message : "Unable to load the blog.");
+  //       }
+  //     } finally {
+  //       if (isActive) {
+  //         setLoading(false);
+  //       }
+  //     }
+  //   };
+
+  //   void loadBlog();
+
+  //   return () => {
+  //     isActive = false;
+  //   };
+  // }, [blogId, isHydrated, token]);
+
+  // if (loading || !isHydrated) {
+  //   return (
+  //     <section className="mx-auto max-w-4xl px-4 py-10">
+  //       <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800">
+  //         <p className="text-sm text-gray-600 dark:text-gray-300">Loading blog...</p>
+  //       </div>
+  //     </section>
+  //   );
+  // }
+
+  if (!blog) {
     return (
       <section className="mx-auto max-w-4xl space-y-4 px-4 py-10">
         <Link href="/" className="text-sm text-blue-600 hover:underline">
@@ -81,7 +115,7 @@ export default function BlogPage({ params }: BlogPageProps) {
         </Link>
         <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800">
           <p className="text-sm text-red-600 dark:text-red-300">
-            {error || "Blog not found."}
+            {"Blog not found."}
           </p>
         </div>
       </section>
@@ -89,8 +123,8 @@ export default function BlogPage({ params }: BlogPageProps) {
   }
 
   const isPreview = blog.status !== "approved";
-  const canManageBlog =
-    currentUser?.role === "admin" || currentUser?.id === blog.author.id;
+  // const canManageBlog =
+  //   currentUser?.role === "admin" || currentUser?.id === blog.author.id;
 
   return (
     <section className="mx-auto max-w-4xl space-y-6 px-4 py-10">
@@ -98,11 +132,11 @@ export default function BlogPage({ params }: BlogPageProps) {
         <Link href="/" className="text-sm text-blue-600 hover:underline">
           Back to blogs
         </Link>
-        {canManageBlog ? (
+        {/* {canManageBlog ? (
           <Link href="/dashboard" className="text-sm text-blue-600 hover:underline">
             Back to dashboard
           </Link>
-        ) : null}
+        ) : null} */}
       </div>
 
       <article className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 md:p-8">
@@ -140,6 +174,23 @@ export default function BlogPage({ params }: BlogPageProps) {
           ))}
         </div>
 
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              headline: blog.title,
+              description: blog.summary,
+              author: {
+                "@type": "Person",
+                name: blog.author.username,
+              },
+              datePublished: blog.created_at,
+            }),
+          }}
+        />
+        
         <div className="mt-8 border-t border-gray-200 pt-8 dark:border-gray-700">
           <div className="whitespace-pre-wrap text-base leading-8 text-gray-700 dark:text-gray-200">
             {blog.content}

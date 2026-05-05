@@ -54,6 +54,10 @@ export async function apiRequest<T>(
     if (!response.ok) {
         const message = data?.detail || "Something went wrong";
 
+        if (response.status === 404) {
+            return null as T; // ✅ important
+        }
+
         // 🔥 Handle expired/invalid token
         if (response.status === 401) {
             handleUnauthorized();
