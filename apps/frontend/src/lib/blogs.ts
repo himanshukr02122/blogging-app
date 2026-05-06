@@ -13,8 +13,12 @@ type ReviewInput = {
   comment: string;
 };
 
-export function listPublishedBlogs() {
-  return apiRequest<{ items: Blog[] }>("/blogs");
+export async function listPublishedBlogs(): Promise<Blog[]> {
+  const data = await apiRequest<{ items: Blog[] }>("/blogs");
+
+  if (!data) return []; // handles 404 safely
+
+  return data.items;
 }
 
 export function getPublishedBlog(blogId: number) {

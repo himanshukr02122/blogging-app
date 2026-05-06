@@ -20,7 +20,7 @@ export default function BlogFeed() {
       try {
         const response = await listPublishedBlogs();
         if (isActive) {
-          setBlogs(response.items);
+          setBlogs(response);
         }
       } catch (err) {
         if (isActive) {
