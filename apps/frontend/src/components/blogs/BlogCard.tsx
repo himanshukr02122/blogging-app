@@ -1,11 +1,11 @@
 import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
 
 import { Blog } from "@/app/types/blog";
 import { ChevronsRight } from "lucide-react";
 
 export default function BlogCard({ blog }: { blog: Blog }) {
   const initials = blog.author.username.slice(0, 2).toUpperCase();
-
   return (
     <Link
       href={`/blogs/${blog.id}`}
@@ -27,7 +27,11 @@ export default function BlogCard({ blog }: { blog: Blog }) {
           </div>
           <div>
             <p className="text-sm font-medium">{blog.author.username}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-300">Published blog</p>
+            <p className="text-xs text-gray-500">
+              {formatDistanceToNow(new Date(blog.updated_at), {
+                addSuffix: true,
+              })}
+            </p>
           </div>
         </div>
         <ChevronsRight className="lg:hidden" />
