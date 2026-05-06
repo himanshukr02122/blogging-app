@@ -17,7 +17,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://blogging-app-frontend-ten.vercel.app"),
   title: {
     default: "Tech Blog – Web Development, React, Next.js Guides",
     template: "%s | Tech Blog",

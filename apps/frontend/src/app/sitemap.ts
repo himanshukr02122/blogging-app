@@ -1,17 +1,34 @@
 import { listPublishedBlogs } from "@/lib/blogs";
 import { Blog } from "./types/blog";
 
-export default async function sitemap() {
-    const blogs: Blog[] = await listPublishedBlogs();
+export const dynamic = "force-dynamic";
 
-    return [
-        {
-            url: "https://blogging-app-frontend-ten.vercel.app",
-            lastModified: new Date(),
-        },
-        ...(blogs).map((blog) => ({
-            url: `https://blogging-app-frontend-ten.vercel.app/blogs/${blog.id}`,
-            lastModified: new Date(blog.updated_at),
-        })),
-    ];
+const BASE_URL =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    "http://localhost:3000";
+
+export default async function sitemap() {
+    try {
+        const blogs: Blog[] = await listPublishedBlogs();
+
+        return [
+            {
+                url: BASE_URL,
+                lastModified: new Date(),
+            },
+            ...blogs.map((blog) => ({
+                url: `${BASE_URL}/blogs/${blog.id}`,
+                lastModified: new Date(blog.updated_at),
+            })),
+        ];
+    } catch (err) {
+        console.error("Sitemap error:", err);
+
+        return [
+            {
+                url: BASE_URL,
+                lastModified: new Date(),
+            },
+        ];
+    }
 }
