@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Blog } from "@/app/types/blog";
+import { ChevronsRight } from "lucide-react";
 
 export default function BlogCard({ blog }: { blog: Blog }) {
   const initials = blog.author.username.slice(0, 2).toUpperCase();
@@ -17,14 +18,19 @@ export default function BlogCard({ blog }: { blog: Blog }) {
           <span className="text-xl leading-none">&#8594;</span>
         </span>
       </div>
-      <div className="mb-3 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 font-semibold text-white">
-          {initials}
+      <div
+        className="flex gap-2 items-start justify-between"
+      >
+        <div className="mb-3 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 font-semibold text-white">
+            {initials}
+          </div>
+          <div>
+            <p className="text-sm font-medium">{blog.author.username}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-300">Published blog</p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-medium">{blog.author.username}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-300">Published blog</p>
-        </div>
+        <ChevronsRight className="lg:hidden" />
       </div>
 
       <h3 className="mb-2 font-semibold">{blog.title}</h3>
